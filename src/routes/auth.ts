@@ -52,7 +52,7 @@ router.get("/login/google", async (_, res) => {
   const { data } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:4000/auth/callback"
+      redirectTo: "https://carbonscan-api.vercel.app/auth/callback"
     }
   })
 
