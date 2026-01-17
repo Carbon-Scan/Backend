@@ -30,3 +30,15 @@ model EmissionDetail {
 
   @@map("EmissionDetail")
 }
+
+
+model Review {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  text       String
+  sentiment  String
+  confidence Float
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("reviews")
+}
