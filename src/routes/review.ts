@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { prisma } from "../lib/prisma"
+
 import { authMiddleware } from "../middleware/auth"
 
 const router = Router()
@@ -16,15 +17,10 @@ router.post("/", authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "Ulasan tidak boleh kosong" })
     }
 
-    // ===== SENTIMENT ANALYSIS (FASTAPI SPACE) =====
     const sentimentRes = await fetch(SENTIMENT_API, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: review_text,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: review_text }),
     })
 
     if (!sentimentRes.ok) {
@@ -35,7 +31,6 @@ router.post("/", authMiddleware, async (req, res) => {
 
     const sentiment = sentimentJson.sentiment.label
     const confidence = sentimentJson.sentiment.confidence
-    // =============================================
 
     const review = await prisma.review.create({
       data: {
