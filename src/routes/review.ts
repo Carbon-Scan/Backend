@@ -1,12 +1,12 @@
 import { Router } from "express"
 import { prisma } from "../lib/prisma"
-
 import { authMiddleware } from "../middleware/auth"
+import fetch from "node-fetch"
 
 const router = Router()
 
 const SENTIMENT_API =
-  "https://delia-ayu-nandhita-chatbot-sentimen.hf.space/sentiment"
+  "https://delia-ayu-nandhita-chatbot-sentimen.hf.space/sentiment/"
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
@@ -24,6 +24,8 @@ router.post("/", authMiddleware, async (req, res) => {
     })
 
     if (!sentimentRes.ok) {
+      const t = await sentimentRes.text()
+      console.error("HF ERROR:", t)
       throw new Error("Sentiment service error")
     }
 
