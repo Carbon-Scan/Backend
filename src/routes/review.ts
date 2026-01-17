@@ -1,57 +1,44 @@
 import { Router } from "express"
 import { prisma } from "../lib/prisma"
 import { authMiddleware } from "../middleware/auth"
-import fetch from "node-fetch"
 
 const router = Router()
-
-const SENTIMENT_API =
-  "https://delia-ayu-nandhita-chatbot-sentimen.hf.space/sentiment/"
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const user = (req as any).user
-    const { review_text } = req.body
+    const { review_text, sentiment, confidence } = req.body
 
-    console.log("USER:", user)
-    console.log("REVIEW TEXT:", review_text)
+    // ===== AUTH GUARD =====
+    if (!user || !user.id) {
+      return res.status(401).json({ message: "Unauthorized" })
+    }
 
+    // ===== VALIDASI INPUT =====
     if (!review_text || !review_text.trim()) {
       return res.status(400).json({ message: "Ulasan tidak boleh kosong" })
     }
 
-    // ===== CALL HF =====
-    const sentimentRes = await fetch(SENTIMENT_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: review_text }),
-    })
-
-    console.log("HF STATUS:", sentimentRes.status)
-
-    const rawText = await sentimentRes.text()
-    console.log("HF RAW RESPONSE:", rawText)
-
-    if (!sentimentRes.ok) {
-      throw new Error("HF ERROR")
+    if (!sentiment || typeof confidence !== "number") {
+      return res.status(400).json({
+        message: "Sentiment dan confidence wajib dikirim",
+      })
     }
 
-    const sentimentJson = JSON.parse(rawText)
+    // (opsional) validasi nilai
+    if (confidence < 0 || confidence > 1) {
+      return res.status(400).json({
+        message: "Confidence harus bernilai antara 0 dan 1",
+      })
+    }
 
-    console.log("HF JSON:", sentimentJson)
-
-    const sentiment = sentimentJson.sentiment?.label
-    const confidence = sentimentJson.sentiment?.confidence
-
-    console.log("PARSED:", sentiment, confidence)
-
-    // ===== SAVE DB =====
+    // ===== SAVE DATABASE =====
     const review = await prisma.review.create({
       data: {
-        userId: user.id,
+        userId: user.id,       // dari Supabase
         text: review_text,
-        sentiment,
-        confidence,
+        sentiment,             // dari FN (HF)
+        confidence,            // dari FN (HF)
       },
     })
 
