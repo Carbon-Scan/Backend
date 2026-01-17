@@ -39,5 +39,7 @@ model Review {
   sentiment  String
   confidence Float
   created_at DateTime @default(now())
+
+  @@map("reviews")
 }
 
