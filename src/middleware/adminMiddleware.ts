@@ -7,16 +7,15 @@ export function adminMiddleware(
 ) {
   const user = (req as any).user
 
-  if (!user) {
-    return res.status(401).json({
-      message: "Unauthorized",
-    })
+  if (!user || !user.email) {
+    return res.status(401).json({ message: "Unauthorized" })
   }
 
-  // ✅ OPSI 1: ADMIN BERDASARKAN EMAIL
-  const adminEmail = process.env.ADMIN_EMAIL
+  const adminEmails = process.env.ADMIN_EMAILS
+    ?.split(",")
+    .map((e) => e.trim().toLowerCase())
 
-  if (user.email !== adminEmail) {
+  if (!adminEmails?.includes(user.email.toLowerCase())) {
     return res.status(403).json({
       message: "Akses ditolak (admin only)",
     })

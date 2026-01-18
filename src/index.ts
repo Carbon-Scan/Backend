@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import cookieParser from "cookie-parser"
 
 import authRoutes from "./routes/auth"
 import emissionRoutes from "./routes/emission"
@@ -10,15 +11,19 @@ import profileRouter from "./routes/profile"
 import reviewRoutes from "./routes/review"
 import adminRoutes from "./routes/admin"
 
-
-
-
 dotenv.config()
 
 const app = express()
 
-app.use(cors())
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+)
+
 app.use(express.json())
+app.use(cookieParser()) 
 
 app.get("/", (_req, res) => {
   res.send("Backend Running")
@@ -33,7 +38,6 @@ app.use("/api/profile", profileRouter)
 app.use("/api/review", reviewRoutes)
 
 const PORT = process.env.PORT || 4000
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`)
 })
