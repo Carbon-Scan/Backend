@@ -37,7 +37,8 @@ model Review {
   text       String
   sentiment  String
   confidence Float
-  email      String?
+
+  userId     String   @map("user_id")
   created_at DateTime @default(now())
 
   @@map("reviews")

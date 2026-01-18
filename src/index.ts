@@ -8,6 +8,7 @@ import dashboardRoutes from "./routes/dashboard"
 import historyRoutes from "./routes/history"
 import profileRouter from "./routes/profile"
 import reviewRoutes from "./routes/review"
+import adminRoutes from "./routes/admin"
 
 
 
@@ -24,7 +25,7 @@ app.get("/", (_req, res) => {
 })
 
 app.use("/api/auth", authRoutes)
-
+app.use("/api/admin", adminRoutes)
 app.use("/api/emission", emissionRoutes)
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/history", historyRoutes)

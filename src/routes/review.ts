@@ -1,11 +1,13 @@
 import { Router } from "express"
 import { prisma } from "../lib/prisma"
+import { authMiddleware } from "../middleware/auth"
 
 const router = Router()
 
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { review_text, sentiment, confidence, email } = req.body
+    const user = (req as any).user
+    const { review_text, sentiment, confidence } = req.body
 
     // ===== VALIDASI INPUT =====
     if (!review_text || !review_text.trim()) {
@@ -24,13 +26,12 @@ router.post("/", async (req, res) => {
       })
     }
 
-    // ===== SAVE DATABASE (ANONYMOUS) =====
     const review = await prisma.review.create({
       data: {
         text: review_text,
         sentiment,
         confidence,
-        email: email || null, // optional
+        userId: user.id, // 🔥 WAJIB
       },
     })
 
@@ -47,5 +48,3 @@ router.post("/", async (req, res) => {
 })
 
 export default router
-
-// +review
