@@ -33,9 +33,10 @@ router.post("/login", (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: true,      // HTTPS (Vercel)
+    sameSite: "none",  // cross-domain
   })
+
 
   res.json({ message: "Login admin berhasil" })
 })
