@@ -34,10 +34,10 @@ model EmissionDetail {
 
 model Review {
   id         String   @id @default(uuid())
-  user_id    String
   text       String
   sentiment  String
   confidence Float
+  email      String?
   created_at DateTime @default(now())
 
   @@map("reviews")

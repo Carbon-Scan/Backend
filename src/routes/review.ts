@@ -1,18 +1,11 @@
 import { Router } from "express"
 import { prisma } from "../lib/prisma"
-import { authMiddleware } from "../middleware/auth"
 
 const router = Router()
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const user = (req as any).user
-    const { review_text, sentiment, confidence } = req.body
-
-    // ===== AUTH GUARD =====
-    if (!user || !user.id) {
-      return res.status(401).json({ message: "Unauthorized" })
-    }
+    const { review_text, sentiment, confidence, email } = req.body
 
     // ===== VALIDASI INPUT =====
     if (!review_text || !review_text.trim()) {
@@ -25,20 +18,19 @@ router.post("/", authMiddleware, async (req, res) => {
       })
     }
 
-    // (opsional) validasi nilai
     if (confidence < 0 || confidence > 1) {
       return res.status(400).json({
-        message: "Confidence harus bernilai antara 0 dan 1",
+        message: "Confidence harus antara 0 dan 1",
       })
     }
 
-    // ===== SAVE DATABASE =====
+    // ===== SAVE DATABASE (ANONYMOUS) =====
     const review = await prisma.review.create({
       data: {
-        userId: user.id,       // dari Supabase
         text: review_text,
-        sentiment,             // dari FN (HF)
-        confidence,            // dari FN (HF)
+        sentiment,
+        confidence,
+        email: email || null, // optional
       },
     })
 
