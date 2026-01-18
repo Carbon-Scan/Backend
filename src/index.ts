@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://carbonscanemisi.vercel.app",
+      "https://carbonscan-api.vercel.app",
     ],
     credentials: true,
   })
