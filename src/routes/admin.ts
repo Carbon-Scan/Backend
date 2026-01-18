@@ -114,6 +114,7 @@ router.get(
           confidence: true,
           userId: true,
           created_at: true,
+          userEmail: true, 
         },
       })
 

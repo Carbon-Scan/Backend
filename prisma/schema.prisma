@@ -39,9 +39,12 @@ model Review {
   confidence Float
 
   userId     String   @map("user_id")
+  userEmail  String   @map("user_email") 
+
   created_at DateTime @default(now())
 
   @@map("reviews")
 }
+
 
 

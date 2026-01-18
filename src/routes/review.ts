@@ -31,7 +31,8 @@ router.post("/", authMiddleware, async (req, res) => {
         text: review_text,
         sentiment,
         confidence,
-        userId: user.id, // 🔥 WAJIB
+        userId: user.id,
+        userEmail: user.email, 
       },
     })
 
